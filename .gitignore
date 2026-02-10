@@ -172,3 +172,5 @@ cython_debug/
 /experiment_info.json
 
 .DS_Store 
+/lgbm_model.pkl
+/tfidf_vectorizer.pkl

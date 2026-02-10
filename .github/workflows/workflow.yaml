@@ -21,7 +21,7 @@ jobs:
         run: echo "Linitng Repository"
 
       - name: Run Unit test 
-        uses: echo "Running Unit Test"
+        run: echo "Running Unit Test"
 
   build-and-push-images: 
     name: Continous Delivery
