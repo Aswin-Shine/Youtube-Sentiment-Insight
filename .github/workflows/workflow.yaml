@@ -50,7 +50,7 @@ jobs:
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/youtube-sentiment:latest
 
-    Continuous-Deployment:
+  Continuous-Deployment:
     needs: build-and-push-images
     runs-on: self-hosted
     steps:
