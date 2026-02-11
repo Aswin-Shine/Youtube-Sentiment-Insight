@@ -50,10 +50,10 @@ def preprocess_comment(comment):
 
 
 
-Load the model and vectorizer from the model registry and local storage
+#Load the model and vectorizer from the model registry and local storage
 def load_model_and_vectorizer(model_name, model_version, vectorizer_path):
          # Set MLflow tracking URI to your server
-     mlflow.set_tracking_uri("http://16.170.245.75:5000/")  # Replace with your MLflow tracking URI
+     mlflow.set_tracking_uri("http://13.60.35.24:5000")  # Replace with your MLflow tracking URI
      client = MlflowClient()
      model_uri = f"models:/{model_name}/{model_version}"
      model = mlflow.pyfunc.load_model(model_uri)
@@ -82,7 +82,7 @@ def load_model_and_vectorizer(model_name, model_version, vectorizer_path):
 #model, vectorizer = load_model("./lgbm_model.pkl", "./tfidf_vectorizer.pkl")  
 
 # Initialize the model and vectorizer
- model, vectorizer = load_model_and_vectorizer("yt_chrome_plugin_model", "2", "./tfidf_vectorizer.pkl")  # Update paths and versions as needed
+model, vectorizer = load_model_and_vectorizer("yt_chrome_plugin_model", "2", "./tfidf_vectorizer.pkl")  #Update paths and versions as needed
 
 @app.route('/')
 def home():
