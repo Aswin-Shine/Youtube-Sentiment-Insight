@@ -112,8 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <ul class="comment-list">
               ${predictions.slice(0, 25).map((item, index) => `
                 <li class="comment-item">
-                  <span>${index + 1}. ${item.comment}</span><br>
-                  <span class="comment-sentiment">Sentiment: ${item.sentiment}</span>
+                  <span>${index + 1}. ${item.comment}</span><br>  <span class="comment-sentiment">Sentiment: ${item.sentiment}</span>
                 </li>`).join('')}
             </ul>
           </div>`;
@@ -149,23 +148,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function getSentimentPredictions(comments) {
-    try {
-      const response = await fetch(`${API_URL}/predict_with_timestamps`, {
+    const response = await fetch(`${API_URL}/predict_with_timestamps`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ comments })
-      });
-      const result = await response.json();
-      if (response.ok) {
-        return result; // The result now includes sentiment and timestamp
-      } else {
-        throw new Error(result.error || 'Error fetching predictions');
-      }
-    } catch (error) {
-      console.error("Error fetching predictions:", error);
-      outputDiv.innerHTML += "<p>Error fetching sentiment predictions.</p>";
-      return null;
-    }
+        body: JSON.stringify({ comments: comments })
+    });
+    const data = await response.json();
+    return data; // This is now the list of results
   }
 
   async function fetchAndDisplayChart(sentimentCounts) {

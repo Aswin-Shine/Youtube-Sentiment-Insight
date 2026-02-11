@@ -15,6 +15,8 @@ from nltk.stem import WordNetLemmatizer
 from mlflow.tracking import MlflowClient
 import matplotlib.dates as mdates
 import pickle
+import nltk
+from flask import jsonify
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -93,35 +95,42 @@ def home():
 @app.route('/predict_with_timestamps', methods=['POST'])
 def predict_with_timestamps():
     data = request.json
-    comments_data = data.get('comments')
+    comments_data = data.get('comments', [])
     
     if not comments_data:
         return jsonify({"error": "No comments provided"}), 400
 
     try:
+        # 1. Extract raw text and timestamps
         comments = [item['text'] for item in comments_data]
-        timestamps = [item['timestamp'] for item in comments_data]
+        
+        # 2. Preprocess
+        preprocessed = [preprocess_comment(c) for c in comments]
+        
+        # 3. Vectorize
+        tfidf_matrix = vectorizer.transform(preprocessed)
+        
+        # 4. FIX: Convert to DataFrame with feature names to satisfy MLflow Schema
+        feature_names = vectorizer.get_feature_names_out()
+        df_input = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)
+        
+        # 5. Predict
+        raw_predictions = model.predict(df_input)
 
-        # Preprocess each comment before vectorizing
-        preprocessed_comments = [preprocess_comment(comment) for comment in comments]
-        
-        # Transform comments using the vectorizer
-        transformed_comments = vectorizer.transform(preprocessed_comments)
+        # 6. Map results back to the original objects
+        results = []
+        for i, item in enumerate(comments_data):
+            results.append({
+                "comment": item['text'],        # Matches popup.js expectation
+                "sentiment": int(raw_predictions[i]), # Standard Python int for JSON
+                "timestamp": item['timestamp']
+            })
 
-        # Convert the sparse matrix to dense format
-        dense_comments = transformed_comments.toarray()  # Convert to dense array
-        
-        # Make predictions
-        predictions = model.predict(dense_comments).tolist()  # Convert to list
-        
-        # Convert predictions to strings for consistency
-        predictions = [str(pred) for pred in predictions]
+        return jsonify(results) # Returns the list directly to the JS fetch
+
     except Exception as e:
-        return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
-    
-    # Return the response with original comments, predicted sentiments, and timestamps
-    response = [{"comment": comment, "sentiment": sentiment, "timestamp": timestamp} for comment, sentiment, timestamp in zip(comments, predictions, timestamps)]
-    return jsonify(response)
+        app.logger.error(f"Prediction error: {str(e)}")
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
 
 
@@ -129,32 +138,37 @@ def predict_with_timestamps():
 def predict():
     data = request.json
     comments = data.get('comments')
-    print("i am the comment: ",comments)
-    print("i am the comment type: ",type(comments))
+    
+    # Log incoming data for debugging
+    print(f"Incoming comments count: {len(comments) if comments else 0}")
     
     if not comments:
         return jsonify({"error": "No comments provided"}), 400
 
     try:
-        # Preprocess each comment before vectorizing
+        # 1. Preprocess each comment before vectorizing
         preprocessed_comments = [preprocess_comment(comment) for comment in comments]
         
-        # Transform comments using the vectorizer
+        # 2. Transform comments using the vectorizer
         transformed_comments = vectorizer.transform(preprocessed_comments)
 
-        # Convert the sparse matrix to dense format
-        dense_comments = transformed_comments.toarray()  # Convert to dense array
+        # 3. FIX: Convert sparse matrix to DataFrame with feature names
+        # This satisfies the MLflow Schema/Signature requirement
+        feature_names = vectorizer.get_feature_names_out()
+        df_input = pd.DataFrame(transformed_comments.toarray(), columns=feature_names)
         
-        # Make predictions
-        predictions = model.predict(dense_comments).tolist()  # Convert to list
+        # 4. Make predictions using the labeled DataFrame
+        predictions = model.predict(df_input).tolist() 
         
-        # Convert predictions to strings for consistency
-        # predictions = [str(pred) for pred in predictions]
     except Exception as e:
+        app.logger.error(f"Prediction failed: {str(e)}")
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
     
-    # Return the response with original comments and predicted sentiments
-    response = [{"comment": comment, "sentiment": sentiment} for comment, sentiment in zip(comments, predictions)]
+    # 5. Return the response with original comments and predicted sentiments
+    response = [
+        {"comment": comment, "sentiment": sentiment} 
+        for comment, sentiment in zip(comments, predictions)
+    ]
     return jsonify(response)
 
 
