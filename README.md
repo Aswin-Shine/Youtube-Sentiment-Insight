@@ -181,7 +181,8 @@ curl -X POST http://<ec2-instance>:5000/predict \
 - Interactive charts and word clouds
 - Trend analysis over time
 
-![Chrome Extension](./assets/chrome-extension1.png) (./assets/chrome-extension2.png) 
+![Chrome Extension](./assets/chrome-extension1.png)
+![Chrome Extension](./assets/chrome-extension2.png)
 
 ---
 
@@ -256,7 +257,7 @@ dvc repro  # Reproduce the entire pipeline
 5. **Start MLflow UI**
 
 ```bash
-mlflow ui --host 0.0.0.0 --port 5000
+mlflow server  --host 0.0.0.0 --port 5000  --default-artifact-root s3://mlflow-server-0407 --disable-security-middleware
 ```
 
 6. **Run Flask API**
@@ -366,8 +367,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **MLOps & DevOps Engineer**
 
-- GitHub: [@yourusername](https://github.com/Aswin-Shine)
-- LinkedIn: [Your Profile](https://www.linkedin.com/in/aswinshine/)
+- GitHub: [@Aswin-Shine](https://github.com/Aswin-Shine)
+- LinkedIn: [Aswin Shine](https://www.linkedin.com/in/aswinshine/)
 
 ---
 
@@ -385,7 +386,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For questions or collaboration opportunities, reach out via:
 
 - Email: [ashwinsh.91@gmail.com]
-- LinkedIn: [your-profile] (https://www.linkedin.com/in/aswinshine/)
+- LinkedIn: [Aswin Shine](https://www.linkedin.com/in/aswinshine/)
 
 ---
 
