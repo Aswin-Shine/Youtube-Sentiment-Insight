@@ -1,205 +1,231 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>YouTube Comment Insights</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      /* Kiro IDE inspired Lavender Dark Palette */
-      --bg-deep: #0d0d1a;
-      --bg-card: #16162a;
-      --lavender: #a39cf4;
-      --lavender-light: #c7c2ff;
-      --lavender-muted: #3d3d5c;
-      --text-main: #f1f1f1;
-      --text-muted: #9499c3;
-      --accent: #c678dd;
-      --border: rgba(163, 156, 244, 0.15);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>YouTube Comment Insights</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Kiro IDE inspired Lavender Dark Palette */
+        --bg-deep: #0d0d1a;
+        --bg-card: #16162a;
+        --lavender: #a39cf4;
+        --lavender-light: #c7c2ff;
+        --lavender-muted: #3d3d5c;
+        --text-main: #f1f1f1;
+        --text-muted: #9499c3;
+        --accent: #c678dd;
+        --border: rgba(163, 156, 244, 0.15);
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      }
 
-    * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-deep);
-      color: var(--text-main);
-      margin: 0;
-      width: 350px; /* Slightly wider for better visual breathing room */
-      padding: 20px;
-      overflow-x: hidden;
-    }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-deep);
+        color: var(--text-main);
+        margin: 0;
+        width: 350px; /* Slightly wider for better visual breathing room */
+        padding: 20px;
+        overflow-x: hidden;
+      }
 
-    h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 22px;
-      margin: 0 0 20px 0;
-      background: linear-gradient(135deg, var(--text-main) 0%, var(--lavender) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+      h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 22px;
+        margin: 0 0 20px 0;
+        background: linear-gradient(
+          135deg,
+          var(--text-main) 0%,
+          var(--lavender) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
 
-    /* Professional Bento-style Section Containers */
-    .section {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
-    }
+      /* Professional Bento-style Section Containers */
+      .section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
 
-    .section-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--lavender);
-      margin-bottom: 12px;
-      display: block;
-    }
+      .section-title {
+        font-family: "Outfit", sans-serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--lavender);
+        margin-bottom: 12px;
+        display: block;
+      }
 
-    /* Metrics Grid */
-    .metrics-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+      /* Metrics Grid */
+      .metrics-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
 
-    .metric {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      text-align: center;
-      transition: transform 0.2s ease;
-    }
+      .metric {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+        transition: transform 0.2s ease;
+      }
 
-    .metric:hover {
-      transform: translateY(-2px);
-      border-color: var(--lavender);
-    }
+      .metric:hover {
+        transform: translateY(-2px);
+        border-color: var(--lavender);
+      }
 
-    .metric h3 {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin: 0 0 4px 0;
-      font-weight: 500;
-    }
+      .metric h3 {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin: 0 0 4px 0;
+        font-weight: 500;
+      }
 
-    .metric p {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin: 0;
-    }
+      .metric p {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0;
+      }
 
-    /* Output/Logging Area */
-    #output p {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin: 8px 0;
-    }
+      /* Output/Logging Area */
+      #output p {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 8px 0;
+      }
 
-    /* Styled Comment List */
-    .comment-list {
-      list-style: none;
-      padding: 0;
-      max-height: 300px;
-      overflow-y: auto;
-    }
+      /* Styled Comment List */
+      .comment-list {
+        list-style: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+      }
 
-    .comment-item {
-      padding: 10px;
-      background: rgba(163, 156, 244, 0.05);
-      border-left: 3px solid var(--lavender-muted);
-      border-radius: 4px;
-      margin-bottom: 8px;
-      font-size: 12px;
-    }
+      .comment-item {
+        padding: 10px;
+        background: rgba(163, 156, 244, 0.05);
+        border-left: 3px solid var(--lavender-muted);
+        border-radius: 4px;
+        margin-bottom: 8px;
+        font-size: 12px;
+      }
 
-    .comment-item:hover {
-      border-left-color: var(--lavender);
-      background: rgba(163, 156, 244, 0.1);
-    }
+      .comment-item:hover {
+        border-left-color: var(--lavender);
+        background: rgba(163, 156, 244, 0.1);
+      }
 
-    .comment-sentiment {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--lavender);
-      margin-top: 4px;
-      display: block;
-    }
+      .comment-sentiment {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--lavender);
+        margin-top: 4px;
+        display: block;
+      }
 
-    /* Chart & Graph Containers */
-    .viz-container {
-      width: 100%;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 10px;
-      background: rgba(0,0,0,0.2);
-    }
+      /* Chart & Graph Containers */
+      .viz-container {
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.2);
+      }
 
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
-      transition: opacity 0.3s ease;
-    }
+      img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: opacity 0.3s ease;
+      }
 
-    /* Custom Scrollbar for a polished feel */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg-deep); }
-    ::-webkit-scrollbar-thumb { 
-      background: var(--lavender-muted); 
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb:hover { background: var(--lavender); }
+      /* Custom Scrollbar for a polished feel */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-deep);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--lavender-muted);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--lavender);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        style="color: var(--lavender)"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        ></path>
+      </svg>
+      Insights
+    </h1>
 
-  </style>
-</head>
-<body>
-  <h1>
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--lavender)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-    Insights
-  </h1>
+    <div class="section" id="output">
+      <span class="section-title">Status</span>
+      <p>Waiting for YouTube video...</p>
+    </div>
 
-  <div class="section" id="output">
-    <span class="section-title">Status</span>
-    <p>Waiting for YouTube video...</p>
-  </div>
+    <div class="section">
+      <span class="section-title">Sentiment Distribution</span>
+      <div id="chart-container" class="viz-container"></div>
+    </div>
 
-  <div class="section">
-    <span class="section-title">Sentiment Distribution</span>
-    <div id="chart-container" class="viz-container"></div>
-  </div>
+    <div class="section">
+      <span class="section-title">Engagement Trends</span>
+      <div id="trend-graph-container" class="viz-container"></div>
+    </div>
 
-  <div class="section">
-    <span class="section-title">Engagement Trends</span>
-    <div id="trend-graph-container" class="viz-container"></div>
-  </div>
+    <div class="section">
+      <span class="section-title">Top Key-Terms</span>
+      <div id="wordcloud-container" class="viz-container"></div>
+    </div>
 
-  <div class="section">
-    <span class="section-title">Top Key-Terms</span>
-    <div id="wordcloud-container" class="viz-container"></div>
-  </div>
+    <div class="section">
+      <span class="section-title">Quick Stats</span>
+      <div class="metrics-container" id="metrics-container"></div>
+    </div>
 
-  <div class="section">
-    <span class="section-title">Quick Stats</span>
-    <div class="metrics-container" id="metrics-container">
-      </div>
-  </div>
-
-  <div class="section">
-    <span class="section-title">Recent Feedback</span>
-    <div id="predictions-list"></div>
-  </div>
-
-</body>
+    <div class="section">
+      <span class="section-title">Recent Feedback</span>
+      <div id="predictions-list"></div>
+    </div>
+  </body>
 </html>
