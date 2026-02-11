@@ -120,37 +120,27 @@ def predict():
 def generate_chart():
     try:
         data = request.get_json()
-        sentiment_counts = data.get('sentiment_counts')
+        counts = data.get('sentiment_counts', {})
         
         labels = ['Positive', 'Neutral', 'Negative']
+        # Convert keys to string just in case JS sends them as numbers
         sizes = [
-            int(sentiment_counts.get('1', 0)),
-            int(sentiment_counts.get('0', 0)),
-            int(sentiment_counts.get('-1', 0))
+            int(counts.get('1', counts.get(1, 0))),
+            int(counts.get('0', counts.get(0, 0))),
+            int(counts.get('-1', counts.get(-1, 0)))
         ]
         
-        # Professional Lavender Palette
         colors = ['#a39cf4', '#3d3d5c', '#c678dd'] 
-
         plt.figure(figsize=(6, 6), facecolor='none')
-        plt.pie(
-            sizes,
-            labels=labels,
-            colors=colors,
-            autopct='%1.1f%%',
-            startangle=140,
-            textprops={'color': '#f1f1f1', 'weight': 'bold'}
-        )
-        plt.axis('equal')
-
+        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140, textprops={'color': '#f1f1f1'})
+        
         img_io = io.BytesIO()
         plt.savefig(img_io, format='PNG', transparent=True)
         img_io.seek(0)
         plt.close()
-
         return send_file(img_io, mimetype='image/png')
     except Exception as e:
-        return jsonify({"error": f"Chart generation failed: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate_wordcloud', methods=['POST'])
 def generate_wordcloud():

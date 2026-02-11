@@ -1,6 +1,6 @@
-// popup.js - Lavender UI Compatible
+// popup.js - Lavender UI Compatible (Fixed Version)
 document.addEventListener("DOMContentLoaded", async () => {
-  const statusDiv = document.getElementById("output"); // Targeting the Status Bento
+  const statusDiv = document.getElementById("output");
   const metricsContainer = document.getElementById("metrics-container");
   const predictionsList = document.getElementById("predictions-list");
   
@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
     const url = tabs[0].url;
-    const youtubeRegex = /^https:\/\/價(?:www\.)?youtube\.com\/watch\?v=([\w-]{11})/;
+    // FIXED: Removed the '價' typo and improved regex
+    const youtubeRegex = /^https:\/\/(?:www\.)?youtube\.com\/watch\?v=([\w-]{11})/;
     const match = url.match(youtubeRegex);
 
     if (match && match[1]) {
@@ -26,26 +27,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       
       const predictions = await getSentimentPredictions(comments);
       
-      // Update Status to Done
-      statusDiv.innerHTML = `<span class="section-title">Status</span><p>Analysis Complete for ${comments.length} comments.</p>`;
+      statusDiv.innerHTML = `<span class="section-title">Status</span><p>Analysis Complete!</p>`;
 
-      // 1. Calculate and Display Metrics in the new Grid
+      // 1. Metrics Calculation
       displayMetrics(predictions);
 
-      // 2. Render the Charts/Visuals
-      await fetchAndDisplayChart(predictions);
+      // 2. Chart Logic - FIXED: Now calculating counts to match app.py
+      const counts = { "1": 0, "0": 0, "-1": 0 };
+      predictions.forEach(p => { counts[p.sentiment.toString()]++; });
+      
+      await fetchAndDisplayChart(counts);
       await fetchAndDisplayTrendGraph(predictions);
       await fetchAndDisplayWordCloud(comments.map(c => c.text));
 
-      // 3. Render the Recent Feedback List
+      // 3. Comment Feed
       renderCommentList(predictions);
 
     } else {
       statusDiv.innerHTML = `<p>Please open a YouTube video page.</p>`;
     }
   });
-
-  // --- LOGIC FUNCTIONS (Keep your original logic) ---
 
   async function fetchComments(videoId) {
     let comments = [];
@@ -58,9 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           timestamp: item.snippet.topLevelComment.snippet.publishedAt
         }));
       }
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    }
+    } catch (e) { console.error("Fetch error:", e); }
     return comments;
   }
 
@@ -74,41 +73,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function displayMetrics(predictions) {
-    const totalComments = predictions.length;
-    const sentimentScores = predictions.map(p => parseInt(p.sentiment));
-    const avgSentiment = sentimentScores.reduce((a, b) => a + b, 0) / totalComments;
-    
-    // Lavender UI Metric Boxes
+    const total = predictions.length;
+    const scores = predictions.map(p => p.sentiment);
+    const avg = scores.reduce((a, b) => a + b, 0) / total;
     metricsContainer.innerHTML = `
-      <div class="metric">
-        <h3>Total Analyzed</h3>
-        <p>${totalComments}</p>
-      </div>
-      <div class="metric">
-        <h3>Avg Sentiment</h3>
-        <p>${avgSentiment.toFixed(2)}</p>
-      </div>
-    `;
+      <div class="metric"><h3>Total Comments</h3><p>${total}</p></div>
+      <div class="metric"><h3>Avg Sentiment</h3><p>${avg.toFixed(2)}</p></div>`;
   }
 
   function renderCommentList(predictions) {
-    predictionsList.innerHTML = `
-      <ul class="comment-list">
-        ${predictions.slice(0, 10).map((item, index) => `
-          <li class="comment-item">
-            <span>${item.comment}</span>
-            <span class="comment-sentiment">Sentiment: ${item.sentiment}</span>
-          </li>`).join('')}
-      </ul>`;
+    predictionsList.innerHTML = `<ul class="comment-list">
+      ${predictions.slice(0, 10).map(item => `
+        <li class="comment-item">
+          <span>${item.comment}</span>
+          <span class="comment-sentiment">Type: ${item.sentiment}</span>
+        </li>`).join('')}</ul>`;
   }
 
-  // --- VISUALIZATION FUNCTIONS (Updating selectors to match Lavender IDs) ---
-
-  async function fetchAndDisplayChart(predictions) {
+  async function fetchAndDisplayChart(counts) {
     const response = await fetch(`${API_URL}/generate_chart`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ predictions: predictions.map(p => p.sentiment) })
+      body: JSON.stringify({ sentiment_counts: counts }) // FIXED: Correct key for app.py
     });
     const blob = await response.blob();
     const img = document.createElement('img');
@@ -116,11 +102,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById('chart-container').appendChild(img);
   }
 
-  async function fetchAndDisplayTrendGraph(predictions) {
+  async function fetchAndDisplayTrendGraph(data) {
     const response = await fetch(`${API_URL}/generate_trend_graph`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sentiment_data: predictions })
+      body: JSON.stringify({ sentiment_data: data })
     });
     const blob = await response.blob();
     const img = document.createElement('img');
