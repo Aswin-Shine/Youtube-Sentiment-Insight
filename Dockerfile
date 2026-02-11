@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY . /app
 
-COPY tfidf_vectorizer.pkl /app/flask_app/tfidf_vectorizer.pkl
-
 RUN pip install --upgrade pip
 
 RUN apt-get update && apt-get install -y \

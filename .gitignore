@@ -173,4 +173,3 @@ cython_debug/
 
 .DS_Store 
 /lgbm_model.pkl
-/tfidf_vectorizer.pkl
