@@ -2,167 +2,172 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>YouTube Comment Insights</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Sentiment Insights</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        /* Kiro IDE inspired Lavender Dark Palette */
-        --bg-deep: #0d0d1a;
-        --bg-card: #16162a;
+        /* Kiro IDE / Lavender Palette */
+        --bg-deep: #0a0a14;
+        --bg-card: #121225;
         --lavender: #a39cf4;
-        --lavender-light: #c7c2ff;
-        --lavender-muted: #3d3d5c;
-        --text-main: #f1f1f1;
-        --text-muted: #9499c3;
-        --accent: #c678dd;
-        --border: rgba(163, 156, 244, 0.15);
+        --lavender-dim: rgba(163, 156, 244, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #8b8ba7;
+        --accent: #ff79c6;
+        --border: rgba(163, 156, 244, 0.12);
         --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       }
 
-      * {
-        box-sizing: border-box;
-      }
-
       body {
-        font-family: "Inter", sans-serif;
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
         background-color: var(--bg-deep);
         color: var(--text-main);
+        width: 360px;
         margin: 0;
-        width: 350px; /* Slightly wider for better visual breathing room */
         padding: 20px;
-        overflow-x: hidden;
+        line-height: 1.5;
       }
 
-      h1 {
-        font-family: "Outfit", sans-serif;
-        font-size: 22px;
-        margin: 0 0 20px 0;
-        background: linear-gradient(
-          135deg,
-          var(--text-main) 0%,
-          var(--lavender) 100%
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+      /* Header Styling */
+      .header {
         display: flex;
         align-items: center;
         gap: 10px;
+        margin-bottom: 20px;
       }
 
-      /* Professional Bento-style Section Containers */
+      .header h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 18px;
+        margin: 0;
+        color: var(--lavender);
+      }
+
+      /* Glassmorphism Section Styling */
       .section {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: 16px;
         padding: 16px;
         margin-bottom: 16px;
         box-shadow: var(--shadow);
+        transition: border-color 0.3s ease;
+      }
+
+      .section:hover {
+        border-color: rgba(163, 156, 244, 0.3);
       }
 
       .section-title {
         font-family: "Outfit", sans-serif;
-        font-size: 13px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: var(--lavender);
+        color: var(--text-muted);
         margin-bottom: 12px;
         display: block;
       }
 
-      /* Metrics Grid */
-      .metrics-container {
+      /* Metric Bento Grid */
+      .metric-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
       }
 
       .metric {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 8px;
+        background: var(--lavender-dim);
+        border-radius: 12px;
         padding: 12px;
         text-align: center;
-        transition: transform 0.2s ease;
-      }
-
-      .metric:hover {
-        transform: translateY(-2px);
-        border-color: var(--lavender);
+        border: 1px solid var(--border);
       }
 
       .metric h3 {
-        font-size: 11px;
-        color: var(--text-muted);
-        margin: 0 0 4px 0;
-        font-weight: 500;
+        font-size: 10px;
+        margin: 0;
+        color: var(--lavender);
+        text-transform: uppercase;
       }
 
       .metric p {
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 700;
+        margin: 4px 0 0 0;
         color: var(--text-main);
-        margin: 0;
       }
 
-      /* Output/Logging Area */
-      #output p {
-        font-size: 13px;
-        color: var(--text-muted);
-        line-height: 1.5;
-        margin: 8px 0;
+      /* Visualizations Container */
+      .viz-container {
+        margin-top: 10px;
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
       }
 
-      /* Styled Comment List */
+      .viz-container img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+
+      /* Comment List with Custom Scrollbar */
       .comment-list {
         list-style: none;
         padding: 0;
-        max-height: 300px;
+        margin: 0;
+        max-height: 250px;
         overflow-y: auto;
       }
 
       .comment-item {
-        padding: 10px;
-        background: rgba(163, 156, 244, 0.05);
-        border-left: 3px solid var(--lavender-muted);
-        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 12px;
+        border-radius: 10px;
         margin-bottom: 8px;
         font-size: 12px;
-      }
-
-      .comment-item:hover {
-        border-left-color: var(--lavender);
-        background: rgba(163, 156, 244, 0.1);
+        border-left: 3px solid var(--lavender);
       }
 
       .comment-sentiment {
-        font-size: 10px;
+        display: block;
+        margin-top: 5px;
         font-weight: 600;
-        text-transform: uppercase;
+        font-size: 10px;
         color: var(--lavender);
-        margin-top: 4px;
-        display: block;
       }
 
-      /* Chart & Graph Containers */
-      .viz-container {
-        width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-top: 10px;
-        background: rgba(0, 0, 0, 0.2);
+      /* Pulse Animation for Status */
+      .pulse {
+        animation: pulse-animation 2s infinite;
       }
 
-      img {
-        width: 100%;
-        height: auto;
-        display: block;
-        transition: opacity 0.3s ease;
+      @keyframes pulse-animation {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
       }
 
-      /* Custom Scrollbar for a polished feel */
+      #output p {
+        margin: 5px 0;
+        font-size: 13px;
+      }
+
+      /* Scrollbar Styling */
       ::-webkit-scrollbar {
         width: 4px;
       }
@@ -170,7 +175,7 @@
         background: var(--bg-deep);
       }
       ::-webkit-scrollbar-thumb {
-        background: var(--lavender-muted);
+        background: var(--lavender-dim);
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
@@ -179,28 +184,43 @@
     </style>
   </head>
   <body>
-    <h1>
+    <div class="header">
       <svg
         width="24"
         height="24"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="currentColor"
+        stroke="#a39cf4"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        style="color: var(--lavender)"
       >
         <path
           d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
         ></path>
       </svg>
-      Insights
-    </h1>
+      <h1>Insights Explorer</h1>
+    </div>
 
-    <div class="section" id="output">
-      <span class="section-title">Status</span>
-      <p>Waiting for YouTube video...</p>
+    <div class="section" id="status-container">
+      <span class="section-title">Engine Status</span>
+      <div id="output">
+        <p>Waiting for YouTube video...</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="section-title">Key Performance Metrics</span>
+      <div id="metrics-container" class="metric-grid">
+        <div class="metric">
+          <h3>Volume</h3>
+          <p>--</p>
+        </div>
+        <div class="metric">
+          <h3>Sentiment</h3>
+          <p>--</p>
+        </div>
+      </div>
     </div>
 
     <div class="section">
@@ -209,7 +229,7 @@
     </div>
 
     <div class="section">
-      <span class="section-title">Engagement Trends</span>
+      <span class="section-title">Engagement Trend</span>
       <div id="trend-graph-container" class="viz-container"></div>
     </div>
 
@@ -219,13 +239,10 @@
     </div>
 
     <div class="section">
-      <span class="section-title">Quick Stats</span>
-      <div class="metrics-container" id="metrics-container"></div>
-    </div>
-
-    <div class="section">
-      <span class="section-title">Recent Feedback</span>
+      <span class="section-title">Analysis Feed</span>
       <div id="predictions-list"></div>
     </div>
+
+    <script src="popup.js"></script>
   </body>
 </html>

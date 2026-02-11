@@ -146,19 +146,19 @@ def generate_chart():
 def generate_wordcloud():
     try:
         data = request.get_json()
-        comments = data.get('comments')
+        comments = data.get('comments', []) # Added fallback to empty list
 
-        preprocessed_comments = [preprocess_comment(comment) for comment in comments]
-        text = ' '.join(preprocessed_comments)
+        if not comments:
+            return jsonify({"error": "No text provided for wordcloud"}), 400
 
-        # Wordcloud with Lavender theme
+        text = ' '.join(comments)
+
         wordcloud = WordCloud(
             width=800,
             height=400,
-            background_color='#16162a', # Match popup.html bg-card
-            colormap='RdPu',            # Red-Purple gradient
-            stopwords=set(stopwords.words('english')),
-            collocations=False
+            background_color='#16162a', # Matches your --bg-card precisely
+            colormap='magma',           # High-contrast palette for dark mode
+            mode='RGB'
         ).generate(text)
 
         img_io = io.BytesIO()
@@ -167,7 +167,7 @@ def generate_wordcloud():
 
         return send_file(img_io, mimetype='image/png')
     except Exception as e:
-        return jsonify({"error": f"Word cloud generation failed: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate_trend_graph', methods=['POST'])
 def generate_trend_graph():

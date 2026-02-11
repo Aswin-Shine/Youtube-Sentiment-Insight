@@ -12,6 +12,7 @@
     "scripting"
   ],
   "host_permissions": [
+    "https://*.youtube.com/*",
     "https://www.googleapis.com/*",
     "http://56.228.29.222/*"
   ],
